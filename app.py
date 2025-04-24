@@ -1,52 +1,57 @@
 #  Imports
+import streamlit as st
 import re
 
-def check_passwaord_strength(passward):
-    score = 0
+st.set_page_config(page_title = "Password Strength Meter, page_icon 🔒")
+                   
+st.title("🔐Password Strength Checker")
+st.markdown("""
+### Welcome to the ultimate password strength checker!🔥
+use this simple tool to check the strength of your passward and get suggestion on how to make it stronger.
+            we will give you tips to create a **Strong Password** 🔏""")
 
-    # Length Check 
-    if len(passward) >= 8:
-        score +=1
+password = st.text_input("Enter your passward", type="password")
+
+feedback = []
+
+score = 0
+
+if password:
+    if len(password) >= 8:
+        score += 1
+    else:
+        feedback.append("❌ Password should be 8 characters long.")
+
+    if re.search(r'[A-Z]', password) and re.search(r'[a-z]', password):
+        score += 1
+    else:
+        feedback.append("❌ Password should contain both upper and lower case characters.")
+
+    if re.search(r'\d' , password):
+        score += 1
+    else:
+        feedback.append("❌ Passord should contain at least 1 digit.")
+
+    if re.search(r'[!@#$%^&*]', password):
+        score += 1
+    else:
+        feedback.append("❌ Password should contain at least 1 special character.")
     
-    else:
-        print("❌ Passward should be 8 characters long.")
-
-    # Upper & Lower case check
-    if re.search(r"[A-Z]", passward) and re.search(r"[a-z]", passward):
-        score += 1
-
-    else:
-        print(" ❌ Include both uppercase and lowercase letter.")
-
-    # Digit check
-    if re.search(r"\d", passward):
-        score += 1
-
-    else:
-        print("❌ Include at least one digit.")
-
-    # Special character check
-    if re.search(r"[!@#$%^&*_+]", passward):
-        score += 1
-
-    else:
-        print("❌ Include at least one special character.")
-    
-    # Strength rating
     if score == 4:
-        print("✅ Strong Passward!")
+        feedback.append("✅ Your Password is strong!🎉")
 
     elif score == 3:
-        print("⚠️ Moderate Passward - Consider adding more security.")
+        feedback.append("⚠️Your Password is medium strength. It could be Stronger.")
+
+    elif score == 2:
+        feedback.append("🟠 Your Password is moderate. It could be stronger.")
 
     else:
-        print("❌ Weak Passward - Improve it using above suggestions.")
+        feedback.append("🚫 Your Password is weak. Please make it stronger.")
 
-# User Input
-passward = input("Enter your passward: ")
-check_passwaord_strength(passward)
-    
-
-
-
-
+    if feedback:
+        st.markdown("## Improvement Suggestions!")
+        for tip in feedback:
+            st.write(tip)
+else:
+    st.info("Please enter your Passward to get started.")
